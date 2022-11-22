@@ -3,16 +3,26 @@ package com.example.schoolManagement.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+@Entity
+@Table(name = "contact_msg")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Contact {
+public class Contact extends BaseEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "contact_id")
+    private int contactId;
 
     @NotBlank(message = "Name must not be blank")
     @Size(min = 3, message = "Name must be atleast 3 characters long")
@@ -33,4 +43,6 @@ public class Contact {
     @NotBlank(message = "Message must not be belank")
     @Size(min = 10, message = "Message must be atleast 10 characters long")
     private String message;
+
+    private String status;
 }

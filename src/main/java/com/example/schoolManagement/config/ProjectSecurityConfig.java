@@ -27,10 +27,13 @@ public class ProjectSecurityConfig {
         httpSecurity
                 //.csrf(csrf -> csrf.disable())
                 //.csrf().disable()
-                .csrf().ignoringAntMatchers("/saveMsg")
+                .csrf()
+                .ignoringAntMatchers("/saveMsg")
+                .ignoringAntMatchers("/h2-console/**")
                 .and()
                 .authorizeRequests()
                 .mvcMatchers("/dashboard").authenticated()
+                .mvcMatchers("/displayMessages").hasRole("ADMIN")
                 .mvcMatchers("/home").permitAll()
                 .mvcMatchers("/holidays/**").permitAll()
                 .mvcMatchers("/contact").permitAll()
@@ -50,7 +53,13 @@ public class ProjectSecurityConfig {
                 .invalidateHttpSession(true)
                 .permitAll()
                 .and()
+                .authorizeRequests()
+                .antMatchers("/h2-console/**")
+                .permitAll()
+                .and()
                 .httpBasic();
+        // only for h2 database
+        httpSecurity.headers().frameOptions().disable();
         return httpSecurity.build();
     }
 

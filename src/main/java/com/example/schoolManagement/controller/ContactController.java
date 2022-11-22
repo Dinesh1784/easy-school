@@ -4,13 +4,15 @@ import com.example.schoolManagement.model.Contact;
 import com.example.schoolManagement.service.ContactService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
 import javax.validation.Valid;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -59,5 +61,20 @@ public class ContactController {
 
         contactService.saveMessageDetails(contact);
         return "redirect:/contact";
+    }
+
+    @RequestMapping(value = {"/displayMessages"})
+    public ModelAndView displayMessages(Model model){
+        List<Contact> contactMsgs = contactService.findMsgsWithOpenStatus();
+        //System.out.println(contactMsgs);
+        ModelAndView modelAndView = new ModelAndView("messages.html");
+        modelAndView.addObject("contactMsgs", contactMsgs);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/closeMsg", method = RequestMethod.GET)
+    public String closeMsg(@RequestParam int id, Authentication authentication){
+        contactService.updateMsgStatus(id, authentication.getName());
+        return "redirect:/displayMessages";
     }
 }

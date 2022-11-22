@@ -36,7 +36,9 @@ public class LoginController {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logoutPage(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        //System.out.println(authentication);
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        CustomUser customUser = (CustomUser)authentication.getPrincipal();
+//        int userId = customUser.getUserId();
         if(authentication != null){
             new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, authentication);
         }
