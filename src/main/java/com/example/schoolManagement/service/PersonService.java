@@ -6,6 +6,7 @@ import com.example.schoolManagement.model.Roles;
 import com.example.schoolManagement.repository.PersonRepository;
 import com.example.schoolManagement.repository.RolesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +18,14 @@ public class PersonService {
     @Autowired
     RolesRepository rolesRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public boolean createNewPerson(Person person){
         boolean isSaved = false;
         Roles role = rolesRepository.getByRoleName(EazySchoolConatsnts.STUDENT_ROLE);
         person.setRoles(role);
+        person.setPwd(passwordEncoder.encode(person.getPwd()));
         person = personRepository.save(person);
         if(person != null && person.getPersonId() > 1){
             isSaved = true;

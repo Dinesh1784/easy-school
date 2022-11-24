@@ -10,6 +10,10 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     properties:
+      javax:
+        persistence:
+          validation:
+            mode: none
       hibernate.format_sql: true
     hibernate:
       ddl-auto: update
