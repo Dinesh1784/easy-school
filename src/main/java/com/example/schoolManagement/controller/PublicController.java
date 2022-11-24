@@ -1,7 +1,9 @@
 package com.example.schoolManagement.controller;
 
 import com.example.schoolManagement.model.Person;
+import com.example.schoolManagement.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -16,6 +18,9 @@ import javax.validation.Valid;
 @RequestMapping("public")
 public class PublicController {
 
+    @Autowired
+    PersonService personService;
+
     @RequestMapping(value = "/register", method = {RequestMethod.GET})
     public String displayRegisterPage(Model model){
         model.addAttribute("person", new Person());
@@ -28,6 +33,11 @@ public class PublicController {
             log.info("Register form has following errors :{}", errors.toString());
             return "register.html";
         }
-        return "redirect:/login?register=true";
+        boolean isSaved = personService.createNewPerson(person);
+        if(isSaved){
+            return "redirect:/login?register=true";
+        }else{
+            return "register.html";
+        }
     }
 }
