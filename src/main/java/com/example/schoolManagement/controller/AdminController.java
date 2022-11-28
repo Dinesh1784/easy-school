@@ -1,7 +1,9 @@
 package com.example.schoolManagement.controller;
 
+import com.example.schoolManagement.model.Courses;
 import com.example.schoolManagement.model.EazyClass;
 import com.example.schoolManagement.model.Person;
+import com.example.schoolManagement.repository.CoursesRepository;
 import com.example.schoolManagement.repository.EazyClassRepository;
 import com.example.schoolManagement.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,9 @@ public class AdminController {
 
     @Autowired
     PersonRepository personRepository;
+
+    @Autowired
+    CoursesRepository coursesRepository;
 
     @RequestMapping(value = "/displayClasses", method = {RequestMethod.GET})
     public ModelAndView displayClasses(Model model){
@@ -103,4 +108,74 @@ public class AdminController {
         ModelAndView modelAndView = new ModelAndView("redirect:/admin/displayStudents?classId="+eazyClass.getClassId());
         return modelAndView;
     }
+
+    @RequestMapping(value = "/displayCourses", method = {RequestMethod.GET})
+    public ModelAndView displayCourses(Model model){
+        List<Courses> courses = coursesRepository.findAll();
+        ModelAndView modelAndView = new ModelAndView("courses_secure.html");
+        modelAndView.addObject("courses",courses);
+        modelAndView.addObject("course", new Courses());
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/addNewCourse", method = {RequestMethod.POST})
+    public ModelAndView addNewCourse(Model model, @ModelAttribute("course") Courses course){
+        ModelAndView modelAndView = new ModelAndView();
+        coursesRepository.save(course);
+        modelAndView.setViewName("redirect:/admin/displayCourses");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/viewStudents", method = {RequestMethod.GET})
+    public ModelAndView viewStudents(Model model, @RequestParam int id, HttpSession httpSession,
+    @RequestParam(value = "error", required = false) String error
+    ){
+        String errorMessage = null;
+        ModelAndView modelAndView = new ModelAndView("courses_students.html");
+        Optional<Courses> courses = coursesRepository.findById(id);
+        httpSession.setAttribute("courses", courses.get());
+        modelAndView.addObject("courses", courses.get());
+        modelAndView.addObject("person", new Person());
+        if(error != null){
+            errorMessage = "Invalid Email entered";
+            return modelAndView;
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/addStudentToCourse", method = {RequestMethod.POST})
+    public ModelAndView addStudentToCourse(Model model, @ModelAttribute("poerson") Person person, HttpSession httpSession ){
+        ModelAndView modelAndView = new ModelAndView();
+        Courses courses = (Courses) httpSession.getAttribute("courses");
+        Person personEntity = personRepository.readByEmail(person.getEmail());
+        if(personEntity == null || !(personEntity.getPersonId() > 0)){
+            modelAndView.setViewName("redirect:/admin/viewStudents?id="+courses.getCourseId()+"&error=true");
+            return modelAndView;
+        }
+        personEntity.getCourses().add(courses);
+        courses.getPersons().add(personEntity);
+        personRepository.save(personEntity);
+        httpSession.setAttribute("courses", courses);
+        modelAndView.setViewName("redirect:/admin/viewStudents?id="+courses.getCourseId());
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/deleteStudentFromCourse", method = {RequestMethod.GET})
+    public ModelAndView deleteStudentFromCourse(Model model, @RequestParam int personId, HttpSession httpSession){
+        Courses courses = (Courses) httpSession.getAttribute("courses");
+        Optional<Person> person = personRepository.findById(personId);
+        person.ifPresent(stu -> {
+            stu.getCourses().remove(courses);
+            courses.getPersons().remove(stu);
+            personRepository.save(stu);
+            httpSession.setAttribute("courses", courses);
+        });
+//        person.get().getCourses().remove(courses);
+//        courses.getPersons().remove(person);
+//        personRepository.save(person.get());
+//        httpSession.setAttribute("courses", courses);
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin/viewStudents?id="+courses.getCourseId());
+        return modelAndView;
+    }
+
 }
