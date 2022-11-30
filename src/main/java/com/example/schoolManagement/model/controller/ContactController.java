@@ -1,9 +1,10 @@
-package com.example.schoolManagement.controller;
+package com.example.schoolManagement.model.controller;
 
 import com.example.schoolManagement.model.Contact;
 import com.example.schoolManagement.service.ContactService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @Slf4j
@@ -58,17 +60,33 @@ public class ContactController {
             log.error("Contact form validation error due to {}", errors.toString());
             return "contact.html";
         }
-
         contactService.saveMessageDetails(contact);
         return "redirect:/contact";
     }
 
-    @RequestMapping(value = {"/displayMessages"})
-    public ModelAndView displayMessages(Model model){
-        List<Contact> contactMsgs = contactService.findMsgsWithOpenStatus();
-        //System.out.println(contactMsgs);
+//    @RequestMapping(value = {"/displayMessages"})
+//    public ModelAndView displayMessages(Model model){
+//        List<Contact> contactMsgs = contactService.findMsgsWithOpenStatus();
+//        //System.out.println(contactMsgs);
+//        ModelAndView modelAndView = new ModelAndView("messages.html");
+//        modelAndView.addObject("contactMsgs", contactMsgs);
+//        return modelAndView;
+//    }
+
+    @RequestMapping(value = {"/displayMessages/page/{pageNum}"})
+    public ModelAndView displayMessages(Model model, @PathVariable(name = "pageNum") int pageNum,
+                                        @RequestParam(name = "sortField") String sortField,
+                                        @RequestParam(name = "sortDir") String sortDir){
+        Page<Contact> msgPage = contactService.findMsgsWithOpenStatus(pageNum, sortField, sortDir);
+        List<Contact> contactMsgs = msgPage.getContent();
         ModelAndView modelAndView = new ModelAndView("messages.html");
-        modelAndView.addObject("contactMsgs", contactMsgs);
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("totalPages", msgPage.getTotalPages());
+        model.addAttribute("totalMsgs", msgPage.getTotalElements());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+        modelAndView.addObject("contactMsgs",contactMsgs);
         return modelAndView;
     }
 

@@ -1,4 +1,4 @@
-package com.example.schoolManagement.controller;
+package com.example.schoolManagement.model.controller;
 
 import com.example.schoolManagement.model.Courses;
 import com.example.schoolManagement.model.EazyClass;
@@ -8,6 +8,8 @@ import com.example.schoolManagement.repository.EazyClassRepository;
 import com.example.schoolManagement.repository.PersonRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -111,7 +113,12 @@ public class AdminController {
 
     @RequestMapping(value = "/displayCourses", method = {RequestMethod.GET})
     public ModelAndView displayCourses(Model model){
-        List<Courses> courses = coursesRepository.findAll();
+        //List<Courses> courses = coursesRepository.findAll();
+//        List<Courses> coursess = coursesRepository.findAll(Sort.by("name").descending()
+//                .and(Sort.by("id").descending())
+//                .and(Sort.by("etc").ascending())
+//        );
+        List<Courses> courses = coursesRepository.findAll(Sort.by("name").descending());
         ModelAndView modelAndView = new ModelAndView("courses_secure.html");
         modelAndView.addObject("courses",courses);
         modelAndView.addObject("course", new Courses());

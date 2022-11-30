@@ -3,6 +3,8 @@ package com.example.schoolManagement.repository;
 import com.example.schoolManagement.model.Contact;
 import com.example.schoolManagement.rowmapper.ContactRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -17,6 +19,7 @@ import java.util.List;
 @Repository
 public interface ContactRepository extends CrudRepository<Contact, Integer> {
     List<Contact> findByStatus(String status);
+    Page<Contact> findByStatus(String status, Pageable pageable);
 }
 
 //@Repository

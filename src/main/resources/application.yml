@@ -4,10 +4,13 @@ spring:
   thymeleaf:
     cache: false
   datasource:
+#    url: jdbc:mysql://db-mysql-nyc1-49727-do-user-12969859-0.b.db.ondigitalocean.com:25060/defaultdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&requireSSL=true&serverTimezone=UTC
+#    username: doadmin
+#    password: AVNS_ptGBVEVfa94wMUyqMu6
     url: jdbc:mysql://localhost:3306/eazyschool
     username: root
     password: dinesh1784
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     properties:
       javax:

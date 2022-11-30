@@ -1,4 +1,4 @@
-package com.example.schoolManagement.controller;
+package com.example.schoolManagement.model.controller;
 
 import com.example.schoolManagement.model.Address;
 import com.example.schoolManagement.model.Person;

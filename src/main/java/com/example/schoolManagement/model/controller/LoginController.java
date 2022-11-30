@@ -1,4 +1,4 @@
-package com.example.schoolManagement.controller;
+package com.example.schoolManagement.model.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

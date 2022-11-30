@@ -1,4 +1,4 @@
-package com.example.schoolManagement.controller;
+package com.example.schoolManagement.model.controller;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
