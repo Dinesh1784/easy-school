@@ -56,18 +56,27 @@ public class ContactService {
         return msgPage;
     }
 
-    public boolean updateMsgStatus(int contactId, String updatedBy) {
+//    public boolean updateMsgStatus(int contactId, String updatedBy) {
+//        boolean isUpdated = false;
+//        //int result = contactRepository.updateMsgStatus(contactId, EazySchoolConatsnts.CLOSE, updatedBy);
+//        Optional<Contact> contact = contactRepository.findById(contactId);
+//        contact.ifPresent(contact1 -> {
+//            contact1.setStatus(EazySchoolConatsnts.CLOSE);
+//            //since using audit we dont need updatedAt and updatedBy
+////            contact1.setUpdatedBy(updatedBy);
+////            contact1.setUpdatedAt(LocalDateTime.now());
+//        });
+//        Contact updatedContact = contactRepository.save(contact.get());
+//        if(updatedContact != null && updatedContact.getUpdatedBy() != null) {
+//            isUpdated = true;
+//        }
+//        return isUpdated;
+//    }
+
+    public boolean updateMsgStatus(int contactId) {
         boolean isUpdated = false;
-        //int result = contactRepository.updateMsgStatus(contactId, EazySchoolConatsnts.CLOSE, updatedBy);
-        Optional<Contact> contact = contactRepository.findById(contactId);
-        contact.ifPresent(contact1 -> {
-            contact1.setStatus(EazySchoolConatsnts.CLOSE);
-            //since using audit we dont need updatedAt and updatedBy
-//            contact1.setUpdatedBy(updatedBy);
-//            contact1.setUpdatedAt(LocalDateTime.now());
-        });
-        Contact updatedContact = contactRepository.save(contact.get());
-        if(updatedContact != null && updatedContact.getUpdatedBy() != null) {
+        int rows = contactRepository.updateStatusById(EazySchoolConatsnts.CLOSE, contactId);
+        if(rows > 0){
             isUpdated = true;
         }
         return isUpdated;

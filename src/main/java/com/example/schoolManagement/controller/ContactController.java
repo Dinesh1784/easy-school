@@ -1,4 +1,4 @@
-package com.example.schoolManagement.model.controller;
+package com.example.schoolManagement.controller;
 
 import com.example.schoolManagement.model.Contact;
 import com.example.schoolManagement.service.ContactService;
@@ -92,7 +92,8 @@ public class ContactController {
 
     @RequestMapping(value = "/closeMsg", method = RequestMethod.GET)
     public String closeMsg(@RequestParam int id, Authentication authentication){
-        contactService.updateMsgStatus(id, authentication.getName());
+        //contactService.updateMsgStatus(id, authentication.getName());
+        contactService.updateMsgStatus(id);
         return "redirect:/displayMessages";
     }
 }

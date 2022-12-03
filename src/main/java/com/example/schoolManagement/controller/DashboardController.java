@@ -1,4 +1,4 @@
-package com.example.schoolManagement.model.controller;
+package com.example.schoolManagement.controller;
 
 import com.example.schoolManagement.model.Person;
 import com.example.schoolManagement.repository.PersonRepository;

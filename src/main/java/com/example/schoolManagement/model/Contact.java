@@ -1,5 +1,6 @@
 package com.example.schoolManagement.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,25 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "contact_msg")
 @Data
+@SqlResultSetMappings({
+        @SqlResultSetMapping(name = "SqlResultSetMapping.count", columns = @ColumnResult(name = "cnt"))
+})
+@NamedQueries({
+        @NamedQuery(name = "Contact.findOpenMsgs",
+        query = "SELECT c FROM Contact c WHERE c.status = :status"),
+        @NamedQuery(name = "Contact.updateMsgStatus",
+        query = "UPDATE Contact c SET c.status = ?1 WHERE c.contactId = ?2")
+})
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "Contact.findOpenMsgsNative",
+        query = "SELECT * FROM contact_msg c WHERE c.status = :status"),
+        @NamedNativeQuery(name = "Contact.findOpenMsgsNative.count",
+        query = "SELECT count(*) as cnt FROM contact_msg c WHERE c.status = :status",
+        resultSetMapping = "SqlResultSetMapping.count"),
+        @NamedNativeQuery(name = "Contact.updateMsgStatusNative",
+        query = "UPDATE contact_msg c SET c.status = ?1 WHERE c.contactId = ?2")
+})
 @AllArgsConstructor
 @NoArgsConstructor
 public class Contact extends BaseEntity{
@@ -22,6 +42,7 @@ public class Contact extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "contact_id")
+//    @JsonProperty("id")
     private int contactId;
 
     @NotBlank(message = "Name must not be blank")

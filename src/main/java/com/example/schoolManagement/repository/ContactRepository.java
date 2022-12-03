@@ -5,10 +5,14 @@ import com.example.schoolManagement.rowmapper.ContactRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -19,7 +23,23 @@ import java.util.List;
 @Repository
 public interface ContactRepository extends CrudRepository<Contact, Integer> {
     List<Contact> findByStatus(String status);
-    Page<Contact> findByStatus(String status, Pageable pageable);
+
+    //"Select c FROM Contact c where c.status = :status" or "Select c FROM Contact c where c.status = ?1"
+    @Query("Select c FROM Contact c where c.status = :status")  // -> JPQL QUERY (Java persistence query language)
+    //@Query(value = "Select * FROM contact_msg as c WHERE c.status = :status", nativeQuery = true) // -> native query
+    Page<Contact> findByStatus(@Param("status") String status, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Contact c SET c.status = ?1 WHERE c.contactId = ?2")
+    int updateStatusById(String status, int id);
+
+    // NAMED QUERIES
+//    Page<Contact> findOpenMsgs(@Param("status") String status, Pageable pageable);
+//
+//    @Transactional
+//    @Modifying
+//    int pdateMsgStatus(String status, int id);
 }
 
 //@Repository
